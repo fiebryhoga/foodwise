@@ -19,11 +19,16 @@ const DetectFoodFromImageInputSchema = z.object({
 });
 export type DetectFoodFromImageInput = z.infer<typeof DetectFoodFromImageInputSchema>;
 
+const NutritionDetailSchema = z.object({
+    label: z.string().describe("Nama nutrien, misalnya 'Kalori' atau 'Protein'."),
+    value: z.string().describe("Nilai dan satuan nutrien, misalnya '250 kcal' atau '15 gram'."),
+});
+
 const DetectFoodFromImageOutputSchema = z.object({
   foodName: z.string().describe('Nama makanan yang terdeteksi.'),
   description: z.string().describe('Deskripsi singkat tentang makanan yang terdeteksi.'),
   ingredients: z.array(z.string()).describe('Daftar bahan-bahan yang biasanya ditemukan dalam makanan yang terdeteksi.'),
-  nutritionPerServing: z.string().describe('Rincian nutrisi terperinci per porsi dari makanan yang terdeteksi, termasuk kalori, protein, karbohidrat, lemak total (lemak jenuh, lemak tak jenuh tunggal, lemak tak jenuh ganda), kolesterol, natrium, serat, gula, serta vitamin dan mineral penting.'),
+  nutritionPerServing: z.array(NutritionDetailSchema).describe('Daftar detail nutrisi per porsi dari makanan yang terdeteksi.'),
 });
 export type DetectFoodFromImageOutput = z.infer<typeof DetectFoodFromImageOutputSchema>;
 
@@ -41,20 +46,22 @@ Tugas Anda adalah:
 1. Identifikasi nama makanan dalam gambar.
 2. Berikan deskripsi singkat dan menarik tentang makanan tersebut.
 3. Sediakan daftar bahan-bahan utama untuk membuat makanan ini.
-4. Sediakan rincian nutrisi yang sangat lengkap untuk satu porsi sajian. Format harus jelas dan mudah dibaca. Wajib sertakan detail berikut:
+4. Sediakan rincian nutrisi yang sangat lengkap untuk satu porsi sajian dalam format terstruktur. Wajib sertakan detail berikut sebagai objek terpisah dalam array nutritionPerServing:
     - Kalori (kcal)
     - Protein (gram)
     - Karbohidrat (gram)
-    - Lemak Total (gram), dengan rincian:
-        - Lemak Jenuh (gram)
-        - Lemak Tak Jenuh Tunggal (gram)
-        - Lemak Tak Jenuh Ganda (gram)
+    - Lemak Total (gram)
+    - Lemak Jenuh (gram)
+    - Lemak Tak Jenuh Tunggal (gram)
+    - Lemak Tak Jenuh Ganda (gram)
     - Kolesterol (mg)
     - Serat (gram)
     - Gula (gram)
     - Natrium (mg)
     - Vitamin-vitamin utama (misal: Vitamin A, Vitamin C, Vitamin D, dll.)
     - Mineral-mineral utama (misal: Kalsium, Zat Besi, Kalium, dll.)
+
+Setiap item nutrisi harus memiliki 'label' (nama nutrisi) dan 'value' (nilai dan satuannya).
 
 Gambar: {{media url=photoDataUri}}`,
 });

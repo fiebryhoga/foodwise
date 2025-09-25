@@ -14,36 +14,25 @@ interface ResultsDisplayProps {
   onReset: () => void;
 }
 
-const parseNutrition = (nutritionText: string) => {
-    const lines = nutritionText.split('\n').filter(line => line.trim() !== '');
-    const nutritionData = [];
-    
-    for (const line of lines) {
-        const cleanedLine = line.replace(/[-\*]/g, '').trim();
-        if (!cleanedLine.includes(':')) continue;
-        
-        const parts = cleanedLine.split(':');
-        const key = parts[0].trim().toLowerCase();
-        const value = parts.slice(1).join(':').trim();
-        
-        let icon = Info;
-        if (key.includes('kalori')) icon = Flame;
-        else if (key.includes('protein')) icon = Beef;
-        else if (key.includes('karbohidrat')) icon = Wheat;
-        else if (key.includes('lemak total')) icon = Droplets;
-        else if (key.includes('kolesterol')) icon = HeartPulse;
-        else if (key.includes('lemak jenuh')) icon = Minus;
-        else if (key.includes('lemak tak jenuh')) icon = Plus;
-        else if (key.includes('serat')) icon = Leaf;
-        else if (key.includes('gula')) icon = Drumstick;
-
-        nutritionData.push({ label: parts[0].trim(), value, icon });
-    }
-    return nutritionData;
+const getIconForNutrition = (label: string) => {
+    const key = label.toLowerCase();
+    if (key.includes('kalori')) return Flame;
+    if (key.includes('protein')) return Beef;
+    if (key.includes('karbohidrat')) return Wheat;
+    if (key.includes('lemak total')) return Droplets;
+    if (key.includes('kolesterol')) return HeartPulse;
+    if (key.includes('lemak jenuh')) return Minus;
+    if (key.includes('lemak tak jenuh')) return Plus;
+    if (key.includes('serat')) return Leaf;
+    if (key.includes('gula')) return Drumstick;
+    return Info;
 }
 
 export default function ResultsDisplay({ result, imagePreview, isLoading, onReset }: ResultsDisplayProps) {
-  const nutrition = result ? parseNutrition(result.nutritionPerServing) : [];
+  const nutrition = result?.nutritionPerServing?.map(item => ({
+      ...item,
+      icon: getIconForNutrition(item.label),
+  })) || [];
 
   return (
     <Card className="w-full shadow-lg border-border/50">
@@ -117,8 +106,6 @@ export default function ResultsDisplay({ result, imagePreview, isLoading, onRese
                   <NutritionCard key={index} label={item.label} value={item.value} Icon={item.icon} />
                 ))}
               </div>
-            ) : result?.nutritionPerServing ? (
-                <p className="text-sm text-foreground whitespace-pre-wrap font-body bg-muted/30 p-4 rounded-md border">{result.nutritionPerServing}</p>
             ) : (
                 <p className="text-muted-foreground">Informasi gizi tidak tersedia.</p>
             )}
