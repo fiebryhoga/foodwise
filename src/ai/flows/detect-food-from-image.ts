@@ -14,14 +14,16 @@ const DetectFoodFromImageInputSchema = z.object({
   photoDataUri: z
     .string()
     .describe(
-      'A photo of food, as a data URI that must include a MIME type and use Base64 encoding. Expected format: \'data:<mimetype>;base64,<encoded_data>\'.'    ),
+      'A photo of food, as a data URI that must include a MIME type and use Base64 encoding. Expected format: \'data:<mimetype>;base64,<encoded_data>\'.'
+    ),
 });
 export type DetectFoodFromImageInput = z.infer<typeof DetectFoodFromImageInputSchema>;
 
 const DetectFoodFromImageOutputSchema = z.object({
-  foodName: z.string().describe('The name of the detected food item.'),
-  ingredients: z.string().describe('A list of ingredients typically found in the detected food item.'),
-  nutrition: z.string().describe('A detailed nutritional breakdown of the detected food item and its ingredients.'),
+  foodName: z.string().describe('Nama makanan yang terdeteksi.'),
+  description: z.string().describe('Deskripsi singkat tentang makanan yang terdeteksi.'),
+  ingredients: z.array(z.string()).describe('Daftar bahan-bahan yang biasanya ditemukan dalam makanan yang terdeteksi.'),
+  nutritionPerServing: z.string().describe('Rincian nutrisi terperinci per porsi dari makanan yang terdeteksi.'),
 });
 export type DetectFoodFromImageOutput = z.infer<typeof DetectFoodFromImageOutputSchema>;
 
@@ -33,7 +35,15 @@ const detectFoodFromImagePrompt = ai.definePrompt({
   name: 'detectFoodFromImagePrompt',
   input: {schema: DetectFoodFromImageInputSchema},
   output: {schema: DetectFoodFromImageOutputSchema},
-  prompt: `You are a food recognition and nutrition expert.  Based on the image, identify the food item, list its ingredients, and provide a detailed nutritional breakdown.\n\nImage: {{media url=photoDataUri}}`,
+  prompt: `Anda adalah seorang ahli gizi dan pakar makanan dari Indonesia. Berdasarkan gambar yang diberikan, berikan respons dalam Bahasa Indonesia.
+
+Tugas Anda adalah:
+1.  Identifikasi nama makanan dalam gambar.
+2.  Berikan deskripsi singkat dan menarik tentang makanan tersebut.
+3.  Sediakan daftar bahan-bahan utama untuk membuat makanan ini.
+4.  Berikan rincian nutrisi yang lengkap untuk satu porsi sajian. Sertakan informasi seperti kalori, protein, karbohidrat, lemak, vitamin, dan mineral utama. Pastikan formatnya jelas dan mudah dibaca.
+
+Gambar: {{media url=photoDataUri}}`,
 });
 
 const detectFoodFromImageFlow = ai.defineFlow(

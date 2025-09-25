@@ -10,6 +10,6 @@ export async function analyzeImageAction(
     return result;
   } catch (error) {
     console.error('Error in analyzeImageAction:', error);
-    throw new Error('Failed to analyze food from image.');
+    throw new Error('Gagal menganalisis makanan dari gambar.');
   }
 }

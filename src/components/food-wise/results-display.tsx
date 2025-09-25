@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { DetectFoodFromImageOutput } from "@/ai/flows/detect-food-from-image";
-import { ArrowLeft, RefreshCw, Flame, Beef, Wheat, Droplets, Leaf, Info } from "lucide-react";
+import { ArrowLeft, RefreshCw, Flame, Beef, Wheat, Droplets, Leaf, Info, Utensils } from "lucide-react";
 import Image from "next/image";
 import NutritionCard from "./nutrition-card";
 
@@ -19,28 +19,25 @@ const parseNutrition = (nutritionText: string) => {
     const nutritionData = [];
     
     for (const line of lines) {
+        if (!line.includes(':')) continue;
         const parts = line.split(':');
-        if (parts.length < 2) continue;
-
-        const key = parts[0].trim().toLowerCase();
+        const key = parts[0].replace(/[-\*]/g, '').trim().toLowerCase();
         const value = parts.slice(1).join(':').trim();
         let icon = Info;
 
-        if (key.includes('calories')) icon = Flame;
+        if (key.includes('kalori')) icon = Flame;
         else if (key.includes('protein')) icon = Beef;
-        else if (key.includes('carbohydrates') || key.includes('carbs')) icon = Wheat;
-        else if (key.includes('fat')) icon = Droplets;
-        else if (key.includes('vitamins') || key.includes('minerals')) icon = Leaf;
+        else if (key.includes('karbohidrat')) icon = Wheat;
+        else if (key.includes('lemak')) icon = Droplets;
+        else if (key.includes('vitamin') || key.includes('mineral')) icon = Leaf;
 
-        nutritionData.push({ label: parts[0].trim(), value, icon });
+        nutritionData.push({ label: parts[0].replace(/[-\*]/g, '').trim(), value, icon });
     }
     return nutritionData;
 }
 
 export default function ResultsDisplay({ result, imagePreview, isLoading, onReset }: ResultsDisplayProps) {
-
-  const ingredients = result?.ingredients.split(/, | and /).map(i => i.trim()).filter(Boolean) || [];
-  const nutrition = result ? parseNutrition(result.nutrition) : [];
+  const nutrition = result ? parseNutrition(result.nutritionPerServing) : [];
 
   return (
     <Card className="w-full shadow-lg border-border/50">
@@ -48,15 +45,21 @@ export default function ResultsDisplay({ result, imagePreview, isLoading, onRese
         <div className="flex justify-between items-start gap-4">
           <div>
             <Button variant="ghost" size="sm" onClick={onReset} className="mb-2 -ml-4">
-              <ArrowLeft className="mr-2 h-4 w-4" /> Back
+              <ArrowLeft className="mr-2 h-4 w-4" /> Kembali
             </Button>
             {isLoading ? (
-              <Skeleton className="h-10 w-64 rounded-md" />
+              <>
+                <Skeleton className="h-10 w-64 rounded-md" />
+                <Skeleton className="h-4 w-full max-w-sm mt-3 rounded-md" />
+              </>
             ) : (
-              <CardTitle className="font-headline text-4xl">{result?.foodName}</CardTitle>
+              <>
+                <CardTitle className="font-headline text-4xl">{result?.foodName}</CardTitle>
+                <CardDescription className="text-lg mt-2 font-body max-w-prose">{result?.description}</CardDescription>
+              </>
             )}
           </div>
-          <Button variant="outline" size="icon" onClick={onReset} aria-label="Analyze another image">
+          <Button variant="outline" size="icon" onClick={onReset} aria-label="Analisis gambar lain">
               <RefreshCw className="h-4 w-4" />
           </Button>
         </div>
@@ -69,27 +72,27 @@ export default function ResultsDisplay({ result, imagePreview, isLoading, onRese
             </div>
             
             <div>
-              <h3 className="font-headline text-2xl mb-4">Ingredients</h3>
+              <h3 className="font-headline text-2xl mb-4 flex items-center gap-2"><Utensils className="h-6 w-6 text-primary" /> Bahan-bahan</h3>
               {isLoading ? (
                 <div className="flex flex-wrap gap-2">
                   {[...Array(5)].map((_, i) => <Skeleton key={i} className="h-8 w-24 rounded-full" />)}
                 </div>
-              ) : ingredients.length > 0 ? (
+              ) : result?.ingredients && result.ingredients.length > 0 ? (
                 <div className="flex flex-wrap gap-2">
-                  {ingredients.map((item, index) => (
+                  {result.ingredients.map((item, index) => (
                     <Badge key={index} variant="secondary" className="text-md px-3 py-1 bg-primary/10 text-primary-foreground border-primary/20">
                       {item}
                     </Badge>
                   ))}
                 </div>
               ) : (
-                <p className="text-muted-foreground">No ingredients information available.</p>
+                <p className="text-muted-foreground">Informasi bahan tidak tersedia.</p>
               )}
             </div>
           </div>
           
           <div>
-            <h3 className="font-headline text-2xl mb-4">Nutritional Information</h3>
+            <h3 className="font-headline text-2xl mb-4">Informasi Gizi (per porsi)</h3>
             {isLoading ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {[...Array(4)].map((_, i) => (
@@ -108,10 +111,10 @@ export default function ResultsDisplay({ result, imagePreview, isLoading, onRese
                   <NutritionCard key={index} label={item.label} value={item.value} Icon={item.icon} />
                 ))}
               </div>
-            ) : result?.nutrition ? (
-                <p className="text-sm text-foreground whitespace-pre-wrap font-body bg-muted/30 p-4 rounded-md border">{result.nutrition}</p>
+            ) : result?.nutritionPerServing ? (
+                <p className="text-sm text-foreground whitespace-pre-wrap font-body bg-muted/30 p-4 rounded-md border">{result.nutritionPerServing}</p>
             ) : (
-                <p className="text-muted-foreground">No nutrition information available.</p>
+                <p className="text-muted-foreground">Informasi gizi tidak tersedia.</p>
             )}
           </div>
         </div>

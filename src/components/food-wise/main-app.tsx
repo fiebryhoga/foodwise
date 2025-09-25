@@ -34,29 +34,29 @@ export default function FoodWiseApp() {
         try {
           const analysisResult = await analyzeImageAction({ photoDataUri });
           if (!analysisResult || !analysisResult.foodName) {
-              throw new Error('Could not analyze the image. Please try a different one.');
+              throw new Error('Tidak dapat menganalisis gambar. Silakan coba yang lain.');
           }
           setResult(analysisResult);
           setStatus('success');
         } catch (e: any) {
-          const errorMessage = e.message || 'An unexpected error occurred.';
+          const errorMessage = e.message || 'Terjadi kesalahan tak terduga.';
           setError(errorMessage);
           setStatus('error');
           toast({
             variant: 'destructive',
-            title: 'Analysis Failed',
+            title: 'Analisis Gagal',
             description: errorMessage,
           });
         }
       });
     };
     reader.onerror = () => {
-        const errorMessage = 'Failed to read the image file.';
+        const errorMessage = 'Gagal membaca file gambar.';
         setError(errorMessage);
         setStatus('error');
         toast({
             variant: 'destructive',
-            title: 'File Error',
+            title: 'Kesalahan File',
             description: errorMessage,
         });
     };
@@ -79,7 +79,7 @@ export default function FoodWiseApp() {
           FoodWise
         </h1>
         <p className="text-muted-foreground text-lg mt-2 font-body">
-          Your AI-powered nutrition guide.
+          Panduan nutrisi cerdas bertenaga AI Anda.
         </p>
       </header>
       

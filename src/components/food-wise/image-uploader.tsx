@@ -66,8 +66,8 @@ export default function ImageUploader({ onAnalyze, status }: ImageUploaderProps)
   return (
     <Card className="w-full max-w-2xl mx-auto shadow-lg hover:shadow-xl transition-shadow duration-300 border-border/50">
       <CardHeader className="text-center">
-        <CardTitle className="font-headline text-3xl">Detect Your Meal</CardTitle>
-        <CardDescription>Upload an image to get started</CardDescription>
+        <CardTitle className="font-headline text-3xl">Deteksi Makanan Anda</CardTitle>
+        <CardDescription>Unggah gambar untuk memulai</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div
@@ -97,9 +97,9 @@ export default function ImageUploader({ onAnalyze, status }: ImageUploaderProps)
             <div className="flex flex-col items-center gap-4 text-muted-foreground">
               <UploadCloud className="w-16 h-16 text-primary/70" />
               <p className="font-semibold font-body">
-                <span className="text-primary font-bold">Click to upload</span> or drag and drop
+                <span className="text-primary font-bold">Klik untuk mengunggah</span> atau seret dan lepas
               </p>
-              <p className="text-sm">Supports: JPG, PNG</p>
+              <p className="text-sm">Mendukung: JPG, PNG</p>
             </div>
           )}
         </div>
@@ -107,13 +107,13 @@ export default function ImageUploader({ onAnalyze, status }: ImageUploaderProps)
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button onClick={handleChooseFileClick} variant="outline" disabled={isLoading}>
                 <ImageIcon className="mr-2 h-4 w-4" />
-                {file ? 'Change Image' : 'Choose Image'}
+                {file ? 'Ganti Gambar' : 'Pilih Gambar'}
             </Button>
             <Button onClick={handleAnalyzeClick} disabled={!file || isLoading}>
               {isLoading ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               ) : null}
-              Analyze Image
+              Analisis Gambar
             </Button>
         </div>
       </CardContent>
