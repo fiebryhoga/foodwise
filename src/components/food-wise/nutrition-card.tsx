@@ -1,9 +1,9 @@
 import { Card } from "@/components/ui/card";
-import { type LucideProps } from "lucide-react";
+import { type LucideProps, type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface NutritionCardProps {
-  Icon: React.ForwardRefExoticComponent<Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>>;
+  Icon: LucideIcon | React.ForwardRefExoticComponent<Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>>;
   label: string;
   value: string;
   className?: string;
@@ -17,7 +17,7 @@ export default function NutritionCard({ Icon, label, value, className }: Nutriti
         </div>
         <div>
             <p className="text-sm text-muted-foreground font-medium">{label}</p>
-            <p className="text-xl font-bold text-foreground">{value}</p>
+            <p className="text-lg font-bold text-foreground">{value}</p>
         </div>
     </Card>
   );

@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { DetectFoodFromImageOutput } from "@/ai/flows/detect-food-from-image";
-import { ArrowLeft, RefreshCw, Flame, Beef, Wheat, Droplets, Leaf, Info, Utensils } from "lucide-react";
+import { ArrowLeft, RefreshCw, Flame, Beef, Wheat, Droplets, Leaf, Info, Utensils, HeartPulse, Drumstick, Minus, Plus } from "lucide-react";
 import Image from "next/image";
 import NutritionCard from "./nutrition-card";
 
@@ -19,19 +19,25 @@ const parseNutrition = (nutritionText: string) => {
     const nutritionData = [];
     
     for (const line of lines) {
-        if (!line.includes(':')) continue;
-        const parts = line.split(':');
-        const key = parts[0].replace(/[-\*]/g, '').trim().toLowerCase();
+        const cleanedLine = line.replace(/[-\*]/g, '').trim();
+        if (!cleanedLine.includes(':')) continue;
+        
+        const parts = cleanedLine.split(':');
+        const key = parts[0].trim().toLowerCase();
         const value = parts.slice(1).join(':').trim();
+        
         let icon = Info;
-
         if (key.includes('kalori')) icon = Flame;
         else if (key.includes('protein')) icon = Beef;
         else if (key.includes('karbohidrat')) icon = Wheat;
-        else if (key.includes('lemak')) icon = Droplets;
-        else if (key.includes('vitamin') || key.includes('mineral')) icon = Leaf;
+        else if (key.includes('lemak total')) icon = Droplets;
+        else if (key.includes('kolesterol')) icon = HeartPulse;
+        else if (key.includes('lemak jenuh')) icon = Minus;
+        else if (key.includes('lemak tak jenuh')) icon = Plus;
+        else if (key.includes('serat')) icon = Leaf;
+        else if (key.includes('gula')) icon = Drumstick;
 
-        nutritionData.push({ label: parts[0].replace(/[-\*]/g, '').trim(), value, icon });
+        nutritionData.push({ label: parts[0].trim(), value, icon });
     }
     return nutritionData;
 }
@@ -95,7 +101,7 @@ export default function ResultsDisplay({ result, imagePreview, isLoading, onRese
             <h3 className="font-headline text-2xl mb-4">Informasi Gizi (per porsi)</h3>
             {isLoading ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {[...Array(4)].map((_, i) => (
+                {[...Array(6)].map((_, i) => (
                   <div key={i} className="flex items-center p-4 border rounded-lg">
                     <Skeleton className="h-10 w-10 rounded-full mr-4"/>
                     <div className="space-y-2">
